@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'Lobster';
+    src: url('Lobster-Regular.ttf');
+}
+
+.label {
+    -fx-font-size: 60px;
+    -fx-font-family: 'Lobster';
+    -fx-text-alignment: center;
+    -fx-text-fill: RED;
+}
+
+.button {
+    -fx-font-size: 24px;
+}
