@@ -5,6 +5,8 @@ package sample;
  */
 public class Unit {
 
+    public static final String DEFAULT_VOLUME_NAME = "mL";
+
     private String name;
     private double conversion;
     private String type;
@@ -25,6 +27,10 @@ public class Unit {
 
     public String getType() {
         return type;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

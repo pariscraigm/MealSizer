@@ -33,6 +33,19 @@ public class Recipe {
         }
     }
 
+    public ArrayList<Ingredient> getConvertedIngredientList() {
+        ArrayList<Ingredient> convertedList = new ArrayList<>();
+        for (int i = 0; i < this.list.size(); i++) {
+            Ingredient ingredient = this.list.get(i);
+            ingredient.setAmount(ingredient.getAmount() * ingredient.getUnits().getConversion());
+            if (ingredient.getUnits().getType().equals("volume")) {
+                ingredient.getUnits().setName(Unit.DEFAULT_VOLUME_NAME);
+            }
+            convertedList.add(ingredient);
+        }
+        return convertedList;
+    }
+
     public String toString() {
         return this.name;
     }

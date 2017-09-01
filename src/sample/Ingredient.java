@@ -27,6 +27,14 @@ public class Ingredient {
         return units;
     }
 
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public void setUnits(Unit unit) {
+        this.units = unit;
+    }
+
     public String toString() {
         return this.name;
     }

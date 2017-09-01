@@ -375,14 +375,48 @@ public class Main extends Application {
 
         mealSizerViewSizeButton.setOnAction((e) -> {
             ObservableList<Node> gridChildList = mealSizerViewGridPane.getChildren();
+            Recipe recipe = new Recipe("enteredRecipe");
             for (int i = 0; i < gridChildList.size(); i++) {
                 if (gridChildList.get(i) instanceof HBox) {
                     HBox hbox = (HBox) gridChildList.get(i);
                     ObservableList<Node> hBoxChildList = hbox.getChildren();
-                    TextField textField = (TextField) hBoxChildList.get(0);
+                    String name = null;
+                    for (Node node : gridChildList) {
+                        if (mealSizerViewGridPane.getRowIndex(node) == mealSizerViewGridPane.getRowIndex(hbox) &
+                                mealSizerViewGridPane.getColumnIndex(node) == 0) {
+                            Text nameField = (Text) node;
+                            name = nameField.getText();
+                            break;
+                        }
+                    }
+                    TextField amountField = (TextField) hBoxChildList.get(0);
+                    Double amount = Double.parseDouble(amountField.getText());
                     ComboBox comboBox = (ComboBox) hBoxChildList.get(1);
+                    Unit unit = (Unit) comboBox.getSelectionModel().getSelectedItem();
+                    Ingredient ingredient = new Ingredient(name, amount, unit);
+                    recipe.addIngredient(ingredient);
                 }
             }
+            ArrayList<Ingredient> sizedIngredientList = sizeRecipe(recipe);
+            Stage showSizedRecipeStage = new Stage();
+            GridPane showSizedRecipeGridPane = new GridPane();
+            Scene showSizedRecipeScene = new Scene(showSizedRecipeGridPane, 500, 500);
+            Text nameText = new Text("Name");
+            Text amountText = new Text("Amount");
+            Text unitsText = new Text("Units");
+            showSizedRecipeGridPane.add(nameText, 0, 0);
+            showSizedRecipeGridPane.add(amountText, 1, 0);
+            showSizedRecipeGridPane.add(unitsText, 2, 0);
+            for (int i = 0; i < sizedIngredientList.size(); i++) {
+                Text nText = new Text(sizedIngredientList.get(i).getName());
+                Text aText = new Text("" + sizedIngredientList.get(i).getAmount());
+                Text uText = new Text(sizedIngredientList.get(i).getUnits().toString());
+                showSizedRecipeGridPane.add(nText,0,1+i);
+                showSizedRecipeGridPane.add(aText,1,1+i);
+                showSizedRecipeGridPane.add(uText,2,1+i);
+            }
+            showSizedRecipeStage.setScene(showSizedRecipeScene);
+            showSizedRecipeStage.show();
         });
     }
 
@@ -448,6 +482,36 @@ public class Main extends Application {
             hbox.getChildren().setAll(textField, comboBox);
             mealSizerViewGridPane.add(hbox, 3, i+1);
         }
+    }
+
+    public static ArrayList<Ingredient> sizeRecipe(Recipe enteredRecipe) {
+        ArrayList<Ingredient> currentRecipeConverted = currentRecipe.getConvertedIngredientList();
+        ArrayList<Ingredient> sizedIngredientList = enteredRecipe.getConvertedIngredientList();
+
+        Double min = Double.MAX_VALUE;
+
+        for (int i = 0; i < sizedIngredientList.size(); i++) {
+            for (int j = 0; j < currentRecipeConverted.size(); j++) {
+                if (sizedIngredientList.get(i).getName().equals(currentRecipeConverted.get(j).getName())) {
+                    Double ratio = sizedIngredientList.get(i).getAmount() / currentRecipeConverted.get(j).getAmount();
+                    if (ratio < min) {
+                        min = ratio;
+                    }
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < sizedIngredientList.size(); i++) {
+            for (Ingredient ingredient: currentRecipeConverted) {
+                if (ingredient.getName().equals(sizedIngredientList.get(i).getName())) {
+                    Double currentAmount = ingredient.getAmount();
+                    sizedIngredientList.get(i).setAmount(min * currentAmount);
+                }
+            }
+        }
+
+        return sizedIngredientList;
     }
 
 }
